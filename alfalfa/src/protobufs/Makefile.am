@@ -1,0 +1,17 @@
+source = userinput.proto hostinput.proto transportinstruction.proto deliveryforecast.proto sproutmath.proto
+
+AM_CPPFLAGS = $(protobuf_CFLAGS)
+AM_CXXFLAGS = $(WARNING_CXXFLAGS) $(HARDEN_CFLAGS) $(MISC_CXXFLAGS)
+
+SUFFIXES = .proto .pb.cc
+
+.proto.pb.cc:
+	$(AM_V_GEN)$(PROTOC) --cpp_out=. -I$(srcdir) $<
+
+noinst_LIBRARIES = libmoshprotos.a
+
+libmoshprotos_a_SOURCES = $(source)
+nodist_libmoshprotos_a_SOURCES = $(source:.proto=.pb.cc) $(source:.proto=.pb.h)
+
+BUILT_SOURCES = $(source:.proto=.pb.cc)
+CLEANFILES = $(source:.proto=.pb.cc) $(source:.proto=.pb.h)

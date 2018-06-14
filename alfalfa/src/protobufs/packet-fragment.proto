@@ -1,0 +1,9 @@
+package fragment;
+
+message PacketFragment {
+  required uint32 length = 1;
+  required uint32 id = 2;
+  required uint32 offset = 3;
+  required bool more_frags = 4;
+  required bytes payload = 5;
+}

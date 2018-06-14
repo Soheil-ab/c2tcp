@@ -1,0 +1,77 @@
+#!/usr/bin/perl -w
+
+use strict;
+use LWP::UserAgent;
+use HTTP::Request::Common;
+
+my $down_linkfile = $ARGV[ 0 ];
+my $up_linkfile = $ARGV[ 1 ];
+my $logfile = $ARGV[ 2 ];
+my $port = $ARGV[ 3 ];
+my $latency = $ARGV[ 4 ];
+
+if ( not defined $down_linkfile or not defined $up_linkfile) {
+  die "Usage: $0 DOWN_LINKFILE UP_LINKFILE\n";
+}
+
+my $receiver_pid = fork;
+
+if ( $receiver_pid < 0 ) {
+  die qq{$!};
+} elsif ( $receiver_pid == 0 ) {
+  # child
+  # exec q{$SPROUT_RELAY Sprout} or die qq{$!};
+  exec q{$SPROUT_BT2} or die qq{$!};
+}
+
+chomp( my $prefix = qx{dirname `which mm-link`} );
+my $tracedir = $prefix . q{/../share/mahimahi/traces};
+
+# run the sender inside a linkshell and a delayshell
+my @command = qw{mm-delay 20 mm-link UPLINK DOWNLINK};
+
+# display livegraphs if we seem to be running under X
+#if ( defined $ENV{ 'DISPLAY' } ) {
+#  push @command, qw{--meter-uplink --meter-uplink-delay};
+#}
+
+push @command, qw{--once uplink-log downlink-log --uplink-queue=droptail --uplink-queue-args=\"packets=100\" --downlink-queue=droptail --downlink-queue-args=\"packets=100\" -- sh -c};
+#push @command, q{$SPROUT_CLIENT $MAHIMAHI_BASE 60001 Sprout};
+push @command, q{$SPROUT_BT2 $MAHIMAHI_BASE 60001};
+#push @command, qw{$SPROUT_BT2 $MAHIMAHI_BASE };
+#push @command, "$port";
+
+#print "after.\n$command{13}";
+
+# for the contest, we will send data over Verizon's downlink
+# (datagrump sender's uplink)
+die unless $command[ 1 ] eq "20";
+$command[ 1 ] = "${latency}";
+
+#print "after port setup.\n$command{13}";
+die unless $command[ 3 ] eq "UPLINK";
+$command[ 3 ] = qq{$tracedir/$down_linkfile};
+
+die unless $command[ 4 ] eq "DOWNLINK";
+$command[ 4 ] = qq{$tracedir/$up_linkfile};
+
+#print STDERR "Up log linkfile: ${logfile}\n";
+die unless $command[ 6 ] eq "uplink-log";
+$command[ 6 ] = qq{--uplink-log=up-${logfile}-${latency}};
+
+#print STDERR "Down log linkfile: ${logfile}\n";
+die unless $command[ 7 ] eq "downlink-log";
+$command[ 7 ] = qq{--downlink-log=down-${logfile}-${latency}};
+
+
+system @command;
+
+# kill the receiver (with a SIGKILL)
+system "killall -s9 sproutbt2";
+
+print "\n";
+
+
+print STDERR "\n";
+print STDERR qq{ done.\n\n};
+print STDERR "\n";

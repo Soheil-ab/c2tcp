@@ -1,0 +1,33 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my @input_unfiltered;
+
+my $max_time = -1;
+
+while ( <> ) {
+  chomp;
+  my ( $time, $val ) = split /\s+/, $_;
+  push @input_unfiltered, [ $time, $val ];
+  $max_time = $time;
+}
+
+my $delay = 0;#60000;
+
+my @input;
+for ( @input_unfiltered ) {
+  my ( $time, $val ) = @{ $_ };
+  if ( $time < $max_time - $delay ) {
+    push @input, $val;
+  }
+}
+
+@input = sort { $b <=> $a } @input;
+
+my $num = scalar @input;
+
+my $median = $input[ .5 * $num ];
+my $ninefive = $input[ .05 * $num ];
+
+print "med: $median, 95th: $ninefive\n";

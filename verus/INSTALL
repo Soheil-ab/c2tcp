@@ -1,0 +1,14 @@
+MAC OSX
+----------
+You need to install the following libraries:
+
+$ brew install https://raw.githubusercontent.com/yzaki/verus/master/alglib3.rb
+$ brew install tbb
+$ brew install boost
+$ sudo port install boost
+
+Linux
+------
+You need to install the following libraries:
+
+$ sudo apt-get install libtbb-dev libalglib-dev libalglib3.8 libboost-system1.55-dev
