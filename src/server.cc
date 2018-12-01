@@ -355,7 +355,7 @@ void* CntThread(void* information)
     }
     while(true)
 	{
-       sleep(report_period);
+       usleep(report_period*1000);
        for(int i=0;i<flow_index;i++)
        {
          ret1= get_info(sock_for_cnt[i],&tcp_info);
@@ -368,21 +368,22 @@ void* CntThread(void* information)
          u32 target_max=target*100/100;
          u32 target_min=target*85/100;
          u32 avg_ms=(tcp_info.c2tcp_avg_urtt/1000);
+         u32 minrtt_ms=(tcp_info.c2tcp_min_rtt/1000);
+         target_ratio=(target_max*100)/minrtt_ms;
+
          if (target_max<avg_ms)
          {
-            target_ratio-=avg_ms/target_max*50;
+            target_ratio=target_ratio-(2*(avg_ms-target_max)*target_ratio)/
+                 (avg_ms); // alpha_2=alpha_1*(1-2(avg-t)/avg)
             if(target_ratio<TARGET_RATIO_MIN)
                 target_ratio=TARGET_RATIO_MIN;
          }
-         else if(avg_ms<target_min && avg_ms!=0)
+         else if(avg_ms<target_max && avg_ms!=0)
          {
-            target_ratio+=target_min/avg_ms*50;
+            target_ratio=target_ratio+((target_max-avg_ms)*target_ratio/2)/
+                 (avg_ms); // alpha_2=alpha_1*(1+(t-avg)/(2*avg))
             if(target_ratio>TARGET_RATIO_MAX)
                 target_ratio=TARGET_RATIO_MAX;
-         }
-         else if (avg_ms==0)
-         {
-            target_ratio=TARGET_RATIO_MIN;
          }
          DBGMARK(DBGSERVER,5,"New target_ratio:%d\n",target_ratio);
          ret1 = setsockopt(sock_for_cnt[i], IPPROTO_TCP,TCP_C2TCP_ALPHA_INTERVAL, &target_ratio, sizeof(target_ratio));
@@ -496,8 +497,8 @@ void* DataThread(void* info)
 	//////////////////////////////////////////////////////////////////////////////
 
 	//Calculate loops. In each loop, we can send BUFSIZ (8192) bytes of data
-	loop=flow->flowinfo.size*1024/BUFSIZ;
-	//Calculate remaining size to be sent
+	loop=flow->flowinfo.size/BUFSIZ*1024;
+    //Calculate remaining size to be sent
 	remaining_size=flow->flowinfo.size*1024-loop*BUFSIZ;
 	//Send data with 8192 bytes each loop
     DBGPRINT(DBGSERVER,5,"size:%d\trem_size:%d,loop:%d\n",flow->flowinfo.size*1024,remaining_size,loop);

@@ -16,7 +16,7 @@ i=$9                  #trace_file_index
 latency=10
 target=50
 initial_alpha=150    # it is scaled ==> Actual Initial_alpha=1.5
-tuning_period=1
+tuning_period=500     //500ms
 
 if [ ${c2tcp} -eq 1 ]
 then
