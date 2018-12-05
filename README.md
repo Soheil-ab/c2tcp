@@ -2,7 +2,7 @@
 
 C2TCP v2.0: A Flexible Cellular TCP to Meet Stringent Delay Requirements {<https://arxiv.org/abs/1810.13241v2>}.
 
-(The source code of the earlier version of C2TCP {<https://s18798.pcdn.co/c2tcp/wp-content/uploads/sites/11182/2018/06/C2TCP-camera.pdf>} published in IFIP Networking Confernece, May 2018, can be accessed on <https://github.com/Soheil-ab/C2TCP-IFIP>)
+(The source code of the earlier version of C2TCP {<https://bit.ly/2G0SP9a>} published in IFIP Networking Confernece, May 2018, can be accessed on <https://github.com/Soheil-ab/C2TCP-IFIP>)
 
 Installation Guide
 ==================
