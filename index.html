@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>C2TCP by Soheil-ab</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">C2TCP</h1>
+      <h2 class="project-tagline">C2TCP: A Flexible Cellular TCP to Meet Stringent Delay Requirements</h2>
+      <a href="https://github.com/Soheil-ab/c2tcp" class="btn">View on GitHub</a>
+      <a href="https://github.com/Soheil-ab/c2tcp/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Soheil-ab/c2tcp/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="c2tcp-v20" class="anchor" href="#c2tcp-v20" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>C2TCP v2.0</h1>
+<p>C2TCP v2.0: A Flexible Cellular TCP to Meet Stringent Delay Requirements {<a href="https://doi.org/10.1109/JSAC.2019.2898758">https://doi.org/10.1109/JSAC.2019.2898758</a> , <a href="https://arxiv.org/abs/1810.13241">https://arxiv.org/abs/1810.13241</a> }.</p>
+<p>(The source code of the earlier version of C2TCP {<a href="https://doi.org/10.23919/IFIPNetworking.2018.8696844">https://doi.org/10.23919/IFIPNetworking.2018.8696844</a> , <a href="https://arxiv.org/abs/1807.02689">https://arxiv.org/abs/1807.02689</a> } published in IFIP Networking Confernece, May 2018, can be accessed on <a href="https://github.com/Soheil-ab/C2TCP-IFIP">https://github.com/Soheil-ab/C2TCP-IFIP</a>)</p>
+<h1>
+<a id="installation-guide" class="anchor" href="#installation-guide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation Guide</h1>
+<p>Here we will provide you with detailed instructions to test C2TCP over Mahimahi.</p>
+<h3>
+<a id="getting-the-source-code" class="anchor" href="#getting-the-source-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting the Source Code:</h3>
+<p>Note: C2TCP is implemented on Linux kernel 4.13.1.</p>
+<p>Get the source code:</p>
+<pre><code>cd ~
+git clone https://github.com/Soheil-ab/c2tcp.git
+cd c2tcp
+</code></pre>
+<h3>
+<a id="installing-required-tools" class="anchor" href="#installing-required-tools" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing Required Tools</h3>
+<p>General Note: Installing any of the following tools/schemes, depending on your machine, might require other libraries (in addition to what have been mentioned here). So, if you get any errors mentioning that something not being found when you try to <code>make</code>, install them using <code>apt</code>.</p>
+<ol>
+<li>
+<p>Install Mahimahi (<a href="http://mahimahi.mit.edu/#getting">http://mahimahi.mit.edu/#getting</a>)</p>
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> <span class="pl-k">~</span>/c2tcp/
+sudo apt-get install build-essential git debhelper autotools-dev dh-autoreconf iptables protobuf-compiler libprotobuf-dev pkg-config libssl-dev dnsmasq-base ssl-cert libxcb-present-dev libcairo2-dev libpango1.0-dev iproute2 apache2-dev apache2-bin iptables dnsmasq-base gnuplot iproute2 apache2-api-20120211 libwww-perl
+git clone https://github.com/ravinet/mahimahi 
+<span class="pl-c1">cd</span> mahimahi
+./autogen.sh <span class="pl-k">&amp;&amp;</span> ./configure <span class="pl-k">&amp;&amp;</span> make
+sudo make install
+sudo sysctl -w net.ipv4.ip_forward=1</pre></div>
+</li>
+<li>
+<p>Install iperf3</p>
+<div class="highlight highlight-source-shell"><pre>sudo apt-get remove iperf3 libiperf0
+wget https://iperf.fr/download/ubuntu/libiperf0_3.1.3-1_amd64.deb
+wget https://iperf.fr/download/ubuntu/iperf3_3.1.3-1_amd64.deb
+sudo dpkg -i libiperf0_3.1.3-1_amd64.deb iperf3_3.1.3-1_amd64.deb
+rm libiperf0_3.1.3-1_amd64.deb iperf3_3.1.3-1_amd64.deb</pre></div>
+</li>
+</ol>
+<h3>
+<a id="installing-other-schemes" class="anchor" href="#installing-other-schemes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing Other Schemes</h3>
+<p>BBR, C2TCP, Westwood, and Cubic are already part of the patch. To install Sprout and Verus follow the following instructions:</p>
+<ol>
+<li>
+<p>Build Sprout (<a href="http://alfalfa.mit.edu/">http://alfalfa.mit.edu/</a>)</p>
+<div class="highlight highlight-source-shell"><pre>sudo apt-get install libboost-math-dev libboost-math1.54.0 libprotobuf8 libprotobuf-dev 
+<span class="pl-c1">cd</span> <span class="pl-k">~</span>/c2tcp/alfalfa
+./autogen.sh
+./configure --enable-examples <span class="pl-k">&amp;&amp;</span> make	</pre></div>
+</li>
+<li>
+<p>Build Verus (<a href="https://github.com/yzaki/verus">https://github.com/yzaki/verus</a>)</p>
+<p>Required packages: libtbb libasio libalglib libboost-system</p>
+<div class="highlight highlight-source-shell"><pre>sudo apt-get install build-essential autoconf libtbb-dev libasio-dev libalglib-dev libboost-system-dev
+<span class="pl-c1">cd</span> <span class="pl-k">~</span>/c2tcp/verus
+autoreconf -i
+./configure <span class="pl-k">&amp;&amp;</span> make</pre></div>
+</li>
+</ol>
+<h3>
+<a id="patching-c2tcp-kernel-install-the-prepared-debian-packages" class="anchor" href="#patching-c2tcp-kernel-install-the-prepared-debian-packages" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Patching C2TCP Kernel: Install the prepared debian packages.</h3>
+<p>Simply install the debian packages of the patched kernel:</p>
+<pre><code>cd ~/c2tcp/linux-patch
+sudo dpkg -i linux-image*
+sudo dpkg -i linux-header*
+sudo reboot 
+</code></pre>
+<h3>
+<a id="verify-the-new-kernel" class="anchor" href="#verify-the-new-kernel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Verify the new kernel</h3>
+<pre><code>uname -r
+</code></pre>
+<p>You should see something like 4.13.1-c2tcp.v2.01. If not follow the instructions on <a href="https://github.com/Soheil-ab/C2TCP-IFIP">https://github.com/Soheil-ab/C2TCP-IFIP</a> and bring the 4.13.1-c2tcp.v2.01 image on top of the grub list. For instance, you can use grub-customizer application.</p>
+<p>Check whether C2TCP is there:</p>
+<pre><code>sysctl net.ipv4.tcp_c2tcp_enable
+</code></pre>
+<p>You should see:</p>
+<pre><code>net.ipv4.tcp_c2tcp_enable = 0
+</code></pre>
+<p>We will later enable C2TCP during our evaluation</p>
+<p>In the current implementation, C2TCP's Tuner has been implemented in user-space. So, lets build C2TCP's Server-client app which includes The Tuner.</p>
+<h3>
+<a id="build-c2tcps-server-client-app" class="anchor" href="#build-c2tcps-server-client-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build C2TCP's Server-Client App</h3>
+<p>Simply run the following:</p>
+<pre><code>cd ~/c2tcp/
+./build.sh
+</code></pre>
+<h3>
+<a id="install-our-cellular-traces-gathered-in-nyc" class="anchor" href="#install-our-cellular-traces-gathered-in-nyc" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install our Cellular Traces gathered in NYC</h3>
+<p>You need to get the traces from following link and copy them in Mahimahi's folder</p>
+<pre><code>git clone https://github.com/Soheil-ab/Cellular-Traces-2018.git    
+sudo cp Cell*/* /usr/local/share/maimahi/traces/
+</code></pre>
+<h3>
+<a id="running-the-evaluation" class="anchor" href="#running-the-evaluation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Running The Evaluation</h3>
+<p>For the simplicity, first we disable password-timeout of sudo command:</p>
+<pre><code>sudo visudo
+</code></pre>
+<p>Now add following line and save it:</p>
+<pre><code>Defaults    timestamp_timeout=-1	
+</code></pre>
+<p>We have put required commands to run evaluation and generate the results for differnet schemes in one script.
+Here, we run C2TCP (with Application Target of 50ms), Cubic, BBR, TCP Westwood using the ATT-LTE-2016 trace file with following command:
+(For more information on how to use the script, please check comments in "run.sh" and "evaluate.sh" scripts)</p>
+<pre><code>cd ~/c2tcp/
+./evaluate.sh 1 1 1 0 0 0 1 5000 7
+</code></pre>
+<p>If everything goes fine, you should see the results.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Soheil-ab/c2tcp">C2TCP</a> is maintained by <a href="https://github.com/Soheil-ab">Soheil-ab</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
