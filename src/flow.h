@@ -48,8 +48,10 @@ struct sFlowinfo
 	int dst_edg;
 	int dst_index;
 
-	unsigned int size;
-	unsigned int rem_size;
+//	unsigned int size;
+	uint64_t size;
+    uint64_t rem_size;
+//    unsigned int rem_size;
 
 	sFlowinfo& operator=(const sFlowinfo& other);
 	void Copy(sFlowinfo);

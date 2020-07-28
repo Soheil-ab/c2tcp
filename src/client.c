@@ -41,7 +41,7 @@
 
 #include "common.h"
 
-#define DBG 0 
+#define DBG 0
 #define HASH_RANGE 5
 #define TCP_BBR_EN_MAXDEL 33
 #define TCP_BBR_EN_PRBRTT 34
@@ -87,11 +87,11 @@ int main(int argc, char **argv)
     uint64_t start_timestamp=10;
     FILE *filep;
     char line[4096];
-    usleep(500000);
+//    usleep(500000);
 
     start_timestamp=start_timestamp*1000;
 
-	if(argc!=6)
+	if(argc!=4)
 	{
 		usage();
         for(int i=0;i<argc;i++)
@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 
 	char *savePtr;
 	char* server=(char*)malloc(16*sizeof(char));;	//IP address (e.g. 192.168.101.101) 
-	char query[50];	                                //query=data_size+' '+deadline+' '+agnostic
+	char query[100];	                                //query=data_size+' '+deadline+' '+agnostic
 	int port;                                   	//TCP port number
 	int data_size;	                                //Request data size (KB)	We allocate 20bits for this in nfmark [0, 4GB]
 	int flowid;	
@@ -129,11 +129,15 @@ int main(int argc, char **argv)
 	//Get deadline information: char* to int
 	flowid=atoi(argv[2]);
 	//Get data_size: char* to int
-	data_size=atoi(argv[3]);
+    //data_size=atoi(argv[3]);
+    //Following line won't impact the code in this version: Server always sends data (no size request will be handled in this project ;) )
+    data_size=2700;
 	//Get is_agnostic: char* to int
-	dst_ip=argv[4];
-	//Get TCP port: char* to int
-	port=atoi(argv[5]);
+    //Following line won't impact the code in this version: Server always sends data (We don't need interface bounding in this project ;) )
+    //dst_ip=argv[4];
+//   dst_ip="10.10.10.10";
+    //Get TCP port: char* to int
+	port=atoi(argv[3]);
     char time_s [50];
     char time_us[37];
     int cx;
@@ -154,13 +158,16 @@ int main(int argc, char **argv)
 		strcat(query," ");
 		strcat(query,argv[2]);
 		strcat(query," ");
-		strcat(query,argv[3]);
+//		strcat(query,argv[3]);
+        strcat(query,"2700");
 		strcat(query," ");
-		strcat(query,argv[4]);
+		strcat(query,"10.10.10.10");
+//      strcat(query,argv[4]);
 		strcat(query," ");
         strcat(query,time_s);
         strcat(query," ");
-		strcat(query,argv[3]);
+//		strcat(query,argv[3]);
+        strcat(query,"2700");
 	}
 		
 	//Init sockaddr_in
@@ -172,10 +179,10 @@ int main(int argc, char **argv)
 	servaddr.sin_port=htons(port);
 
 	//Init sockaddr_in
-	memset(&clientaddr,0,sizeof(clientaddr));
-	clientaddr.sin_family=AF_INET;
+//	memset(&clientaddr,0,sizeof(clientaddr));
+//	clientaddr.sin_family=AF_INET;
 	//IP address
-	clientaddr.sin_addr.s_addr=inet_addr(dst_ip);
+//	clientaddr.sin_addr.s_addr=inet_addr(dst_ip);
 	//Port number
 
 	//Init socket
@@ -192,14 +199,16 @@ int main(int argc, char **argv)
 		close(sockfd);
 		return 0;
 	}
+	DBGPRINT(DBG,5,"%s ---\n",inet_ntoa(servaddr.sin_addr));
 
 	//bind it to correct interface
-	if(bind(sockfd,(struct sockaddr *)&clientaddr,sizeof(struct sockaddr))<0)
+    //We don't need this for this project! :D
+/*	if(bind(sockfd,(struct sockaddr *)&clientaddr,sizeof(struct sockaddr))<0)
 	{
 		DBGMARK(0,0,"bind error add:%s : %s",dst_ip,strerror(errno));
 		return 0;
 	}
-
+*/
 	//Establish connection
 	if(connect(sockfd,(struct sockaddr *)&servaddr,sizeof(struct sockaddr))<0)
 	{
@@ -236,7 +245,7 @@ int main(int argc, char **argv)
 
 void usage()
 {
-	DBGWARN("./client [server IP address] [flowid] [request data size(MB)] [dst_ip] [server port] \n");
+	DBGWARN("./client [server IP address] [flowid] [server port] \n");
 }
 
 

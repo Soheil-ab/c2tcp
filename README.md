@@ -1,8 +1,8 @@
 # C2TCP v2.0
 
-C2TCP v2.0: A Flexible Cellular TCP to Meet Stringent Delay Requirements {https://doi.org/10.1109/JSAC.2019.2898758 , https://arxiv.org/abs/1810.13241 }.
+C2TCP v2.2: A Flexible Cellular TCP to Meet Stringent Delay Requirements.
 
-(The source code of the earlier version of C2TCP {https://doi.org/10.23919/IFIPNetworking.2018.8696844 , https://arxiv.org/abs/1807.02689 } published in IFIP Networking Confernece, May 2018, can be accessed on <https://github.com/Soheil-ab/C2TCP-IFIP>)
+()To see the IEEE JSAC'19 release, please checkout branch named v2.0-jsac-19. Also, the source code of C2TCP.v1.0 {https://doi.org/10.23919/IFIPNetworking.2018.8696844 , https://arxiv.org/abs/1807.02689 } published in IFIP Networking Confernece, May 2018, can be accessed on <https://github.com/Soheil-ab/C2TCP-IFIP>)
 
 Installation Guide
 ==================
@@ -47,42 +47,32 @@ General Note: Installing any of the following tools/schemes, depending on your m
 
 ### Installing Other Schemes 
 
-BBR, C2TCP, Westwood, and Cubic are already part of the patch. To install Sprout and Verus follow the following instructions: 
-
-1. Build Sprout (http://alfalfa.mit.edu/)
-
-	```sh  
-	sudo apt-get install libboost-math-dev libboost-math1.54.0 libprotobuf8 libprotobuf-dev 
-	cd ~/c2tcp/alfalfa
-	./autogen.sh
-	./configure --enable-examples && make	
-	```
-
-2. Build Verus (https://github.com/yzaki/verus)
-
-	Required packages: libtbb libasio libalglib libboost-system
-
-	```sh
-	sudo apt-get install build-essential autoconf libtbb-dev libasio-dev libalglib-dev libboost-system-dev
-	cd ~/c2tcp/verus
-	autoreconf -i
-	./configure && make
-	```
+BBR, C2TCP, Westwood, and Cubic are already part of the the current Kernel patch.
 
 ### Patching C2TCP Kernel: Install the prepared debian packages.
 
 Simply install the debian packages of the patched kernel:
 
     cd ~/c2tcp/linux-patch
-    sudo dpkg -i linux-image*
-    sudo dpkg -i linux-header*
+    sudo dpkg -i linux-image*521*
+    sudo dpkg -i linux-header*521*
     sudo reboot 
- 
+
+This Kernel version includes DeepCC and Orca schemes too (Orca: <Soheil Abbasloo, et. al. "Classic Meets Modern: A Pragmatic Learning-Based COngestion COntrol for the Internet", In proc. ACM SIGCOMM 2020>). 
+
+Please note that if you're using v2.0-jsac-19 branch, you need to switch back to the kernel named c2tcp-v2.01 becasue compared to v2.0-jsac-19 kernel, some socket option name/features are changed in the new kernel.
+
+### Patching C2TCP Kernel: Compile the Kernel source code.
+
+Another option is to compile your own kernel using the provided patch. You can use the instructions provided here to do that: https://github.com/Soheil-ab/C2TCP-IFIP/
+
+The source code is available in linux-patch folder.
+
 ### Verify the new kernel
 
 	uname -r
 
-You should see something like 4.13.1-c2tcp.v2.01. If not follow the instructions on https://github.com/Soheil-ab/C2TCP-IFIP and bring the 4.13.1-c2tcp.v2.01 image on top of the grub list. For instance, you can use grub-customizer application.
+You should see something like 4.13.1-*0521*. If not follow the instructions on https://github.com/Soheil-ab/C2TCP-IFIP and bring the 4.13.1-*0521* image on top of the grub list. For instance, you can use grub-customizer application.
 	
 Check whether C2TCP is there:
 	
@@ -94,7 +84,7 @@ You should see:
 	
 	net.ipv4.tcp_c2tcp_enable = 0
 	
-We will later enable C2TCP during our evaluation
+We will later enable C2TCP during our evaluation (In this version, in contrast with v2.0-jsac-19 branch, you can enable/disable C2TCP per socket. Still you can use net.ipv4.tcp_c2tcp_enable to enable C2TCP for the entire system though.)
 
 In the current implementation, C2TCP's Tuner has been implemented in user-space. So, lets build C2TCP's Server-client app which includes The Tuner.  
 
@@ -108,7 +98,7 @@ Simply run the following:
 You need to get the traces from following link and copy them in Mahimahi's folder
 
     git clone https://github.com/Soheil-ab/Cellular-Traces-2018.git    
-    sudo cp Cell*/* /usr/local/share/maimahi/traces/
+    sudo cp Cell*/* traces/
 
 ### Running The Evaluation
 
@@ -119,12 +109,14 @@ For the simplicity, first we disable password-timeout of sudo command:
 Now add following line and save it:
 
 	Defaults    timestamp_timeout=-1	
-	
-We have put required commands to run evaluation and generate the results for differnet schemes in one script.
-Here, we run C2TCP (with Application Target of 50ms), Cubic, BBR, TCP Westwood using the ATT-LTE-2016 trace file with following command:
-(For more information on how to use the script, please check comments in "run.sh" and "evaluate.sh" scripts)
 
-	cd ~/c2tcp/
-	./evaluate.sh 1 1 1 0 0 0 1 5000 7
+The Version includes standalone server-client applications (in contrast with v2.0-jsac-19 branch which had hardcoded mahimahi into the server.)  
+A minimal set of commands to run an evaluation and generate the results is put in run-exp.sh script. 
+Simply run it as:
 
-If everything goes fine, you should see the results.
+    cd ~/c2tcp/
+	./run-exp.sh
+
+If everything goes well, you should see a figure representing throughput through time. You can also find the summary of the results in log/summary.tr file.
+
+
