@@ -119,4 +119,6 @@ Simply run it as:
 
 If everything goes well, you should see a figure representing throughput through time. You can also find the summary of the results in log/summary.tr file.
 
+#### No Target!
+When you set target=0 (in run-exp.sh), system will switch to a mode where it set Target delay automatically to 2xminRTT. It is usefull in a general scenario that applcation doesn't have any specific delay target.
 
