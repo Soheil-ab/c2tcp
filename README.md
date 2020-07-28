@@ -111,12 +111,14 @@ Now add following line and save it:
 	Defaults    timestamp_timeout=-1	
 
 The Version includes standalone server-client applications (in contrast with v2.0-jsac-19 branch which had hardcoded mahimahi into the server.)  
-A minimal set of commands to run an evaluation and generate the results is put in run-exp.sh script. 
+A minimal set of commands to run an evaluation and generate the results is put in run-sample.sh script. 
 Simply run it as:
 
     cd ~/c2tcp/
-	./run-exp.sh
+	./run-sample.sh
 
 If everything goes well, you should see a figure representing throughput through time. You can also find the summary of the results in log/summary.tr file.
 
+#### No Target!
+When you set target=0 (in run-sample.sh), system will switch to a mode where it sets the Target delay automatically to 2xminRTT. It is usefull in a more general scenario in which applcations might not have any specific delay target.
 
