@@ -1,7 +1,5 @@
 source setup.sh
 qsize=100
-#duration=30
-#down="downlink-4g-no-cross-times"
 down="downlink-4g-no-cross-subway.pps"
 duration=690
 port=44444
@@ -10,9 +8,10 @@ init_alpha=150
 
 user=`whoami`
 anal_script="mm-thr"
-target=50
-#Unidirectioanl delay: 10ms
-delay=10
+
+target=0    #Application's desired Target delay: "0" means Target = 2 x minRTT
+#target=50
+delay=10    #Unidirectioanl delay: 10ms
 anal_script="mm-throughput-graph-modified"
 cmd="sudo ./client \$MAHIMAHI_BASE 1 $port & sleep $duration && killall client"
 
