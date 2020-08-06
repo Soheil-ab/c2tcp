@@ -210,10 +210,10 @@ sTrace *trace;
 
 /*C2TCP*/
 #define  TCP_C2TCP_ENABLE 50
-#define  TCP_C2TCP_ALPHA_INTERVAL 51
-#define  TCP_C2TCP_ALPHA_SETPOINT 52
-#define  TCP_C2TCP_ALPHA 53
-#define  TCP_C2TCP_X 54
+//#define  TCP_C2TCP_ALPHA_INTERVAL 51
+//#define  TCP_C2TCP_ALPHA_SETPOINT 52
+#define  TCP_C2TCP_ALPHA 51
+//#define  TCP_C2TCP_X 54
 #define TCP_CC_INFO 26  /* Get Congestion Control (optional)            info */
 
 
