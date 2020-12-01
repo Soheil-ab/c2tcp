@@ -58,9 +58,11 @@ Simply install the debian packages of the patched kernel:
     sudo dpkg -i linux-header*521*
     sudo reboot 
 
-This Kernel version includes DeepCC and Orca schemes too (Orca: <Soheil Abbasloo, et. al. "Classic Meets Modern: A Pragmatic Learning-Based COngestion COntrol for the Internet", In proc. ACM SIGCOMM 2020>). 
+This Kernel version includes DeepCC and Orca schemes too. 
+Orca: Soheil Abbasloo, et. al. "Classic Meets Modern: A Pragmatic Learning-Based COngestion COntrol for the Internet", In proc. ACM SIGCOMM 2020 https://dl.acm.org/doi/abs/10.1145/3387514.3405892
+DeepCC: Soheil Abbasloo, et. al. "Wanna Make Your TCP Scheme Great for Cellular Networks? Let Machines Do It for You!", IEEE JSAC 2021 https://ieeexplore.ieee.org/document/9252929 
 
-Please note that if you're using v2.0-jsac-19 branch, you need to switch back to the kernel named c2tcp-v2.01 becasue compared to v2.0-jsac-19 kernel, some socket option name/features are changed in the new kernel.
+Please note that if you're using v2.0-jsac-19 branch, you need to switch back to the kernel named c2tcp-v2.01, becasue compared to v2.0-jsac-19 kernel, some socket option name/features are changed in the new kernel.
 
 ### Patching C2TCP Kernel: Compile the Kernel source code.
 
