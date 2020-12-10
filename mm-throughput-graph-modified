@@ -89,6 +89,8 @@ LINE: while ( <> ) {
   } elsif ( $event_type eq q{#} ) {
     $capacity{ $bin } += $num_bits;
     $capacity_sum += $num_bits;
+  } elsif ( $event_type eq q{d} ) {
+    ; #Do nothing! We have a packet drop!  
   } elsif ( $event_type eq q{-} ) {
     if ( not defined $delay ) {
       die q{Departure format: timestamp - num_bytes delay};
